@@ -2,12 +2,11 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main] # Trigger on pushes to the main branch
+    branches: [main]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -15,7 +14,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18 # Or your preferred Node.js version
+          node-version: 18
 
       - name: Build frontend
         working-directory: ./frontend
@@ -26,14 +25,25 @@ jobs:
       - name: Build backend Docker image
         working-directory: ./backend
         run: |
-          docker build -t your-dockerhub-username/your-app-name:latest .
+          docker build -t bilelbouzid/todoapp:latest .
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker push your-dockerhub-username/your-app-name:latest
+          docker push bilelbouzid/todoapp:latest
+
+      - name: Build frontend Docker image
+        working-directory: ./frontend
+        run: |
+          docker build -t bilelbouzid/todoappfrontend:latest .
+          docker push bilelbouzid/todoappfrontend:latest
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
           version: 'v1.26.0' # Or your Kubernetes version
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
 
       - name: Deploy to Kubernetes
         run: |
