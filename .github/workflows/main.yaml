@@ -44,6 +44,7 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+          kubectl config current-context # Verify the context (important for debugging)
 
       - name: Deploy to Kubernetes
         run: |
