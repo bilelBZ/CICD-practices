@@ -16,7 +16,7 @@ spec:
         - name: backend
           image: bilelbouzid/todoapp:latest # Replace with your Docker Hub image
           ports:
-            - containerPort: 5000
+            - containerPort: 5002
           resources: # Add resource requests and limits (important for production)
             requests:
               cpu: 100m
